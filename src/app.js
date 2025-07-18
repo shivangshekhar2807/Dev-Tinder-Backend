@@ -5,15 +5,22 @@ const app = express();
 
 
 
-app.get("/data",(req,res)=> {
+app.get("/data",(req,res,next)=> {
+    next()
+    res.send("get success2")
     
-        res.send("ok serverrrr data")
     
-})
+},
+(req,res)=> {
+    
+    res.send("get success")
+    
+}
+)
 
-app.use("/data/2",(req,res)=> {
+app.post("/data/2",(req,res)=> {
     
-    res.send("ok serverrrr data/2")
+    res.send("deleted succesfully")
 
 })
 
