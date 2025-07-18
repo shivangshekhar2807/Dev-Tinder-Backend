@@ -7,6 +7,7 @@ const app = express();
 
 app.get("/data",(req,res,next)=> {
     next()
+    console.log("okkk")
     res.send("get success2")
     
     
