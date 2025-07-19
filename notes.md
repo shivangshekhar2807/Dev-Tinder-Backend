@@ -10,3 +10,5 @@ app.get("/data",(req,res)=> {
 })
 
 app.get ---> is route and the callback function inside it is route handler
+
+
