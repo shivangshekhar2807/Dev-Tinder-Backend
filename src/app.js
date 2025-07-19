@@ -1,40 +1,96 @@
-const express = require("express")
+// const express = require("express");
+// const app = express();
+// const connectDB = require("./config/database");
+// const UserModel  = require("./models/user");
 
+// connectDB()
+//   .then((res) => {
+//     console.log("database CONNECTED");
+//     app.listen(3000, () => {
+//       console.log("starting backend");
+//     });
+//   })
+//   .catch((err) => {
+//     console.log(err, "database CONNECTION Failed");
+//   });
+
+// app.use(express.json());
+    
+
+// app.post("/signUp", async (req, res) => {
+  
+//   console.log(req.body)
+      
+//     const userObj = {
+//         firstName: "Virat",
+//         lastName: "Kohli",
+//         email: "ss@g.com",
+//         password:"ss621311"
+//     }
+
+//     const user = new UserModel(req.body);
+    
+//    const userRes= await user.save();
+
+//     res.send(`saved Successfully ${userRes}`);
+
+//   })
+
+
+const express = require('express');
 const app = express();
+const connectDB = require('./config/database');
+const UserModel = require("./models/user");
 
-
-
-
-app.get("/data",(req,res,next)=> {
-    next()
-    console.log("okkk")
-    res.send("get success2")
-    
-    
-},
-(req,res)=> {
-    
-    res.send("get success")
-    
-}
-)
-
-app.post("/data/2",(req,res)=> {
-    
-    res.send("deleted succesfully")
-
+connectDB().then(() => {
+  console.log("DataBase CONNNECTED");
+  app.listen(3000, () => {
+    console.log("starting backened")
+  });
 })
 
-app.use("/hello",(req,res)=> {
-    
-    res.send("ok serverrrr hello")
+app.use(express.json())
 
+app.post('/ok', async(req, res, next) => {
+  
+  const user = new UserModel(req.body)
+  
+  const userRes = await user.save();
+
+
+  res.send(`saved to DB ${userRes}`);
 })
 
-app.listen(3000, () => {
-    console.log("starting backend")
-   
+
+app.get('/user', async (req, res) => {
+
+  const found = await UserModel.find({ firstName: req.body.firstName })
+
+  if (found.length < 1) {
+    res.status(404).send("User Not Found")
+  }
+  
+  res.send(`user found ${found}`)
+  
 })
 
-// console.log("starting backend",express)
+app.delete("/user", async (req, res) => {
+  const found = await UserModel.findByIdAndDelete(req.body.userId);
+
+ 
+
+  res.send(`user deleted ${found}`);
+});
+
+
+app.get("/Alluser", async (req, res) => {
+  const found = await UserModel.find({});
+
+  if (found.length < 1) {
+    res.status(404).send("User Not Found");
+  }
+
+  res.send(`user found ${found}`);
+});
+
 
