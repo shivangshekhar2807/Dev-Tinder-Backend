@@ -4,6 +4,8 @@ const connectDB = require("./config/database");
 const UserModel = require("./models/user");
 const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser")
+const jwt = require("jsonwebtoken");
 
 connectDB().then(() => {
   console.log("DataBase CONNNECTED");
@@ -13,8 +15,9 @@ connectDB().then(() => {
 });
 
 app.use(express.json());
+app.use(cookieParser());
 
-app.post("/signUp", async (req, res, next) => {
+app.post("/signUp", async(req, res, next) => {
  
   const { password,firstName,lastName,email,gender } = req.body;
 
@@ -54,6 +57,12 @@ app.post('/login', async (req,res) => {
     const passwordPresent =await bcrypt.compare(password, emailPresent.password);
 
     if (passwordPresent) {
+      
+      const token = await jwt.sign({ _id: emailPresent._id }, "shivangshekha2807");
+      
+      console.log("token", token);
+
+      res.cookie("Token",token)
       res.send("Login Successfull")
     }
     else {
@@ -130,3 +139,33 @@ app.get("/Alluser", async (req, res) => {
 
   res.send(`user found ${found}`);
 });
+
+app.get('/profile', async (req, res) => {
+  
+try{
+  const cookie = req.cookies;
+
+  const { Token } = cookie;
+
+  if (!Token) {
+    throw new Error("INVALID TOKEN!!!")
+  }
+
+  const decodedMessage = await jwt.verify(Token, "shivangshekha2807");
+
+  const { _id } = decodedMessage;
+
+  const userProfile = await UserModel.findById(_id);
+
+  if (!userProfile) {
+    throw new Error("NO USER FOUND")
+  }
+
+  console.log(cookie);
+  res.send("Your Profile is :" + userProfile);
+}
+  catch(err){
+    res.status(400).send("ERROR :"+err.message)
+  }
+  
+})
