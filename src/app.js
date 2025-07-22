@@ -6,6 +6,7 @@ const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser")
 const jwt = require("jsonwebtoken");
+const {userAuth}=require("./middlewares/auth")
 
 connectDB().then(() => {
   console.log("DataBase CONNNECTED");
@@ -58,7 +59,9 @@ app.post('/login', async (req,res) => {
 
     if (passwordPresent) {
       
-      const token = await jwt.sign({ _id: emailPresent._id }, "shivangshekha2807");
+      const token = await jwt.sign({ _id: emailPresent._id }, "shivangshekha2807", {
+        expiresIn:"1d"
+      });
       
       console.log("token", token);
 
@@ -75,7 +78,7 @@ app.post('/login', async (req,res) => {
   }
 })
 
-app.post("/user", async (req, res, next) => {
+app.post("/user",userAuth, async (req, res, next) => {
   const user = new UserModel(req.body);
 
   const userRes = await user.save();
@@ -83,7 +86,7 @@ app.post("/user", async (req, res, next) => {
   res.send(`saved to DB ${userRes}`);
 });
 
-app.get("/user", async (req, res) => {
+app.get("/user",userAuth, async (req, res) => {
   const found = await UserModel.find({ firstName: req.body.firstName });
 
   if (found.length < 1) {
@@ -130,7 +133,7 @@ app.patch("/user/:userId", async (req, res) => {
   }
 });
 
-app.get("/Alluser", async (req, res) => {
+app.get("/Alluser",userAuth, async (req, res) => {
   const found = await UserModel.find({});
 
   if (found.length < 1) {
@@ -140,28 +143,17 @@ app.get("/Alluser", async (req, res) => {
   res.send(`user found ${found}`);
 });
 
-app.get('/profile', async (req, res) => {
+app.get('/profile',userAuth, async (req, res) => {
   
 try{
-  const cookie = req.cookies;
-
-  const { Token } = cookie;
-
-  if (!Token) {
-    throw new Error("INVALID TOKEN!!!")
-  }
-
-  const decodedMessage = await jwt.verify(Token, "shivangshekha2807");
-
-  const { _id } = decodedMessage;
-
-  const userProfile = await UserModel.findById(_id);
+  
+  const userProfile = req.user;
 
   if (!userProfile) {
     throw new Error("NO USER FOUND")
   }
 
-  console.log(cookie);
+  
   res.send("Your Profile is :" + userProfile);
 }
   catch(err){
