@@ -6,7 +6,11 @@ const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser")
 const jwt = require("jsonwebtoken");
-const {userAuth}=require("./middlewares/auth")
+const { userAuth } = require("./middlewares/auth")
+
+const authRouter = require('./routes/auth')
+const profileRouter = require('./routes/profile');
+const requestRouter=require('./routes/request')
 
 connectDB().then(() => {
   console.log("DataBase CONNNECTED");
@@ -18,65 +22,12 @@ connectDB().then(() => {
 app.use(express.json());
 app.use(cookieParser());
 
-app.post("/signUp", async(req, res, next) => {
- 
-  const { password,firstName,lastName,email,gender } = req.body;
 
-  try {
-    validateSignUpData(req);
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
 
-    const hashPassword = await bcrypt.hash(password, 10);
-    
-    console.log("hashPassword", hashPassword);
 
-    const user = new UserModel({
-      firstName,
-      lastName,
-      email,
-      gender,
-      password: hashPassword,
-    });
-
-    const userRes = await user.save();
-
-    res.send(`User Added Successfully ${userRes}`);
-  } catch (err) {
-    res.status(400).send("ERROR :" + err.message);
-  }
-});
-
-app.post('/login', async (req,res) => {
-  
-  const { email, password } = req.body;
-  try {
-    const emailPresent = await UserModel.findOne({email});
-
-    if (!emailPresent) {
-      throw new Error("Email Not Found")
-    }
-
-    const passwordPresent =await bcrypt.compare(password, emailPresent.password);
-
-    if (passwordPresent) {
-      
-      const token = await jwt.sign({ _id: emailPresent._id }, "shivangshekha2807", {
-        expiresIn:"1d"
-      });
-      
-      console.log("token", token);
-
-      res.cookie("Token",token)
-      res.send("Login Successfull")
-    }
-    else {
-      throw new Error("Password Incorrect");
-    }
-    
-  }
-  catch (err) {
-    res.status(400).send("ERROR :"+err.message)
-  }
-})
 
 app.post("/user",userAuth, async (req, res, next) => {
   const user = new UserModel(req.body);
@@ -143,21 +94,4 @@ app.get("/Alluser",userAuth, async (req, res) => {
   res.send(`user found ${found}`);
 });
 
-app.get('/profile',userAuth, async (req, res) => {
-  
-try{
-  
-  const userProfile = req.user;
 
-  if (!userProfile) {
-    throw new Error("NO USER FOUND")
-  }
-
-  
-  res.send("Your Profile is :" + userProfile);
-}
-  catch(err){
-    res.status(400).send("ERROR :"+err.message)
-  }
-  
-})
