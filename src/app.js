@@ -10,7 +10,8 @@ const { userAuth } = require("./middlewares/auth")
 
 const authRouter = require('./routes/auth')
 const profileRouter = require('./routes/profile');
-const requestRouter=require('./routes/request')
+const requestRouter = require('./routes/request')
+const userRouter=require('./routes/user')
 
 connectDB().then(() => {
   console.log("DataBase CONNNECTED");
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
+app.use("/", userRouter);
 
 
 
