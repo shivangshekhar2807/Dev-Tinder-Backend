@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 
 authRouter.post("/signUp", async (req, res, next) => {
-  const { password, firstName, lastName, email, gender } = req.body;
+  const { password, firstName, lastName, email, gender, photoUrl } = req.body;
 
   try {
     validateSignUpData(req);
@@ -31,6 +31,7 @@ authRouter.post("/signUp", async (req, res, next) => {
       lastName,
       email,
       gender,
+      photoUrl,
       password: hashPassword,
     });
 
@@ -70,7 +71,10 @@ authRouter.post("/login", async (req, res) => {
       console.log("token", token);
 
       res.cookie("Token", token);
-      res.send("Login Successfull" + emailPresent);
+      res.json({
+        message: "Login Successfull",
+        user: emailPresent,
+      });
     } else {
       throw new Error("Password Incorrect");
     }
