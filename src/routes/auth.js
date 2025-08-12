@@ -70,7 +70,7 @@ authRouter.post("/login", async (req, res) => {
       console.log("token", token);
 
       res.cookie("Token", token);
-      res.send("Login Successfull");
+      res.send("Login Successfull" + emailPresent);
     } else {
       throw new Error("Password Incorrect");
     }
