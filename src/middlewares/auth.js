@@ -2,12 +2,14 @@ const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const UserModel = require("../models/user");
+
 const userAuth = async(req, res, next) => {
-  try{const cookies = req.cookies;
+  try {
+    const cookies = req.cookies;
     const { Token } = cookies;
 
     if (!Token) {
-      throw new Error("TOKEN INVALID");
+      return res.status(401).send("Please Login")
     }
     
     const decodedMessage = await jwt.verify(Token, "shivangshekha2807");

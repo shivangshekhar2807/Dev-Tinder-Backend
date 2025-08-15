@@ -23,7 +23,10 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
       throw new Error("NO USER FOUND");
     }
 
-    res.send("Your Profile is :" + userProfile);
+    res.json({
+      message: "Your Profile is :" + userProfile,
+      data: userProfile,
+    });
   } catch (err) {
     res.status(400).send("ERROR :" + err.message);
   }
