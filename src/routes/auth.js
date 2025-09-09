@@ -61,7 +61,10 @@ authRouter.post("/login", async (req, res) => {
 
     if (passwordPresent) {
       const token = await jwt.sign(
-        { _id: emailPresent._id },
+        {
+          _id: emailPresent._id,
+          firstName: emailPresent.firstName,
+        },
         "shivangshekha2807",
         {
           expiresIn: "1d",

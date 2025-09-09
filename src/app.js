@@ -12,18 +12,19 @@ const authRouter = require('./routes/auth')
 const profileRouter = require('./routes/profile');
 const requestRouter = require('./routes/request')
 const userRouter = require('./routes/user')
+require("dotenv").config();
 const cors=require("cors")
 
 connectDB().then(() => {
   console.log("DataBase CONNNECTED");
-  app.listen(3000, () => {
+  app.listen(5555, () => {
     console.log("starting backened");
   });
 });
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:3001",
     credentials:true
   })
 );
