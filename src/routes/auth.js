@@ -20,11 +20,18 @@ authRouter.post("/signUp", async (req, res, next) => {
   const { password, firstName, lastName, email, gender, photoUrl } = req.body;
 
   try {
-    validateSignUpData(req);
+
+    const emailPresent = await UserModel.findOne({ email });
+    
+    if (emailPresent) {
+       throw new Error("User with this Email allready present");
+    }
+      
+      validateSignUpData(req);
 
     const hashPassword = await bcrypt.hash(password, 10);
 
-    console.log("hashPassword", hashPassword);
+  
 
     const user = new UserModel({
       firstName,
@@ -33,13 +40,32 @@ authRouter.post("/signUp", async (req, res, next) => {
       gender,
       photoUrl,
       password: hashPassword,
+     
     });
 
     const userRes = await user.save();
 
-    res.send(`User Added Successfully ${userRes}`);
+     const token = await jwt.sign(
+       {
+         _id: userRes._id,
+         firstName: userRes.firstName,
+       },
+       "shivangshekha2807",
+       {
+         expiresIn: "1d",
+       }
+     );
+    
+    res.cookie("Token", token);
+
+    res.status(201).json({
+      message: "User Added Successfully",
+      user: userRes,
+    });
   } catch (err) {
-    res.status(400).send("ERROR :" + err.message);
+    res.status(400).json({
+      error: err.message || "Signup failed",
+    });
   }
 });
 
@@ -71,10 +97,10 @@ authRouter.post("/login", async (req, res) => {
         }
       );
 
-      console.log("token", token);
+      // console.log("token", token);
 
       res.cookie("Token", token);
-      res.json({
+      res.status(201).json({
         message: "Login Successfull",
         user: emailPresent,
       });
@@ -82,7 +108,9 @@ authRouter.post("/login", async (req, res) => {
       throw new Error("Password Incorrect");
     }
   } catch (err) {
-    res.status(400).send("ERROR :" + err.message);
+    res.status(400).json({
+      error: err.message || "Login failed",
+    });
   }
 });
 

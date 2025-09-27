@@ -5,7 +5,7 @@ const { userAuth } = require('../middlewares/auth');
 const ConnectionRequestModel = require("../models/connectionRequest");
 const userModel = require("../models/user");
 
-const USER_SAFE_DATA="firstName lastname photoUrl age gender"
+const USER_SAFE_DATA="firstName lastName photoUrl age gender skills about"
 
 userRouter.get('/user/requests/recieved', userAuth, async (req, res) => {
    
@@ -15,10 +15,22 @@ userRouter.get('/user/requests/recieved', userAuth, async (req, res) => {
         const connectionRequest = await ConnectionRequestModel.find({
           toUserId: loggedInuser._id,
           status: "interested",
-        }).populate("fromUserId", ["firstName", "lastName"]);
+        }).populate("fromUserId", [
+          "firstName",
+          "lastName",
+          "photoUrl",
+          "age",
+          "gender",
+          "skills",
+          "about",
+        ]);
 
 
-        res.send("Data Fetched Successfully" + connectionRequest);
+      // res.send("Data Fetched Successfully" + connectionRequest);
+      res.json({
+         status:"Data Fetched Successfully",
+         data: connectionRequest,
+       });
         
     }
     catch (err) {
@@ -29,12 +41,12 @@ userRouter.get('/user/requests/recieved', userAuth, async (req, res) => {
 
 })
 
-userRouter.get('/user/connections', userAuth, (req, res) => {
+userRouter.get('/user/connections', userAuth, async(req, res) => {
 
     try {
         const loggedInUser = req.user;
         
-        const connectionRequest = ConnectionRequestModel.find({
+        const connectionRequest = await ConnectionRequestModel.find({
           $or: [
             {
               toUserId: loggedInUser._id,
@@ -46,14 +58,14 @@ userRouter.get('/user/connections', userAuth, (req, res) => {
             },
           ],
         })
-          .populate("fromUserid", USER_SAFE_DATA)
-          .populate("toUserid", USER_SAFE_DATA);
+          .populate("fromUserId", USER_SAFE_DATA)
+          .populate("toUserId", USER_SAFE_DATA);
 
       const data = connectionRequest.map((item) => {
         if (item.fromUserId._id.toString() === loggedInUser._id.toString()) {
           return item.toUserId
         }
-        return fromUserId;
+        return item.fromUserId;
         })
 
         res.json({
@@ -88,7 +100,7 @@ userRouter.get('/feed', userAuth, async (req, res) => {
           toUserId:loggedInUser._id
         }
       ]
-    }).select("fromUserid toUserId")
+    }).select("fromUserId toUserId")
 
     const hideUserFromFeed = new Set();
 

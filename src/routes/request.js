@@ -19,7 +19,6 @@ app.use(cookieParser());
 requestRouter.post('/request/send/:status/:toUserId', userAuth, async(req, res) => {
 
     try {
-
         const fromUserId = req.user._id;
         const toUserId = req.params.toUserId;
         const status = req.params.status;
@@ -90,7 +89,7 @@ requestRouter.post('/request/review/:status/:fromUserId', userAuth, async(req, r
     }
         
         const connectionRequest = await ConnectionRequestModel.findOne({
-          _id: fromUserId,
+           fromUserId,
           toUserId,
           status:"interested"
         });
