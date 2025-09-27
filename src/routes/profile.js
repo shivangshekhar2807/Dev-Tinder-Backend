@@ -24,7 +24,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
     }
 
     res.json({
-      message: "Your Profile is :" + userProfile,
+      status: "Your Profile is :" + userProfile,
       data: userProfile,
     });
   } catch (err) {

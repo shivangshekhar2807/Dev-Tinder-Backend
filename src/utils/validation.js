@@ -20,11 +20,11 @@ const validateEditProfileData = (req) => {
   const isEditAllowed = [
     "firstName",
     "lastName",
-    "email",
+    
     "about",
     
     "age",
-    "about",
+    "gender",
     "photoUrl",
     "skills"
   ];
