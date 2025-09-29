@@ -13,7 +13,7 @@ sesClient.js is a helper function that creates an Amazon Simple Email Services (
 
 */
 // snippet-start:[ses.JavaScript.createclientv3]
-// require("dotenv").config();
+require("dotenv").config();
 
 
 const { SESClient } =require( "@aws-sdk/client-ses");
@@ -23,8 +23,7 @@ const REGION = "ap-south-1";
 const sesClient = new SESClient({
   region: REGION,
   credentials: {
-    // accessKeyId: "AKIAUHLT6FI56275VZVS",
-    // secretAccessKey: "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",
+   
     accessKeyId: process.env.AWS_SES_ACCESS_KEY,
     secretAccessKey: process.env.AWS_SES_SECRET,
   },
