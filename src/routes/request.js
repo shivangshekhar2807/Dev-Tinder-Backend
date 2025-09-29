@@ -11,7 +11,8 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const { userAuth } = require("../middlewares/auth");
 const ConnectionRequestModel = require('../models/connectionRequest')
-const UserModel=require('../models/user')
+const UserModel = require('../models/user')
+const sendEmail=require('../utils/ses_sendemail')
 
 app.use(express.json());
 app.use(cookieParser());
@@ -45,7 +46,7 @@ requestRouter.post('/request/send/:status/:toUserId', userAuth, async(req, res) 
         const toUser = await userModel.findById(toUserId);
 
         if (!toUser) {
-            res.send(400).send("User not Found")
+           return res.status(400).send("User not Found")
         }
         
         const connectionRequest = new ConnectionRequestModel({
@@ -55,6 +56,13 @@ requestRouter.post('/request/send/:status/:toUserId', userAuth, async(req, res) 
         });
 
         const data = await connectionRequest.save();
+
+        const emailRes = await sendEmail.run(
+          "A new Friend Requesr from" + req.user.firstName,
+          req.user.firstName + "is" + status + "in" + toUser.firstName
+        );
+
+        console.log("emailRes",emailRes)
         res.json({
             message: req.user.firstName + "is" + status + "in" + toUser.firstName,
             data,
@@ -65,9 +73,9 @@ requestRouter.post('/request/send/:status/:toUserId', userAuth, async(req, res) 
         
     }
     
-    const user = req.user;
+   
 
-    res.send(user.firstName+"send the connect request")
+   
 })
 
 
