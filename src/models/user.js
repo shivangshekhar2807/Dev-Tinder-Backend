@@ -1,6 +1,7 @@
 
 const mongoose = require('mongoose');
 const validator = require('validator');
+const membershipPlan = require('../utils/constants');
 
 const userSchema = mongoose.Schema(
   {
@@ -55,6 +56,13 @@ const userSchema = mongoose.Schema(
     },
     skills: {
       type: [String],
+    },
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+    membershipType: {
+      type: String,
     },
   },
   { timestamps: true }

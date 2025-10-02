@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const connectDB = require("./config/database");
 require("dotenv").config();
+
 const UserModel = require("./models/user");
 const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
@@ -13,6 +14,7 @@ const authRouter = require('./routes/auth')
 const profileRouter = require('./routes/profile');
 const requestRouter = require('./routes/request')
 const userRouter = require('./routes/user')
+const paymentRouter=require('./routes/payment')
 
 const cors=require("cors")
 
@@ -21,7 +23,10 @@ connectDB().then(() => {
   app.listen(5555, () => {
     console.log("starting backened on port 5555");
   });
+  require("./utils/cronjob");
 });
+
+
 
 app.use(
   cors({
@@ -39,6 +44,7 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
+app.use("/", paymentRouter);
 
 
 
