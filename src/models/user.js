@@ -63,6 +63,7 @@ const userSchema = mongoose.Schema(
     },
     membershipType: {
       type: String,
+      default:null
     },
   },
   { timestamps: true }
