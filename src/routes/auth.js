@@ -52,7 +52,7 @@ authRouter.post("/signUp", async (req, res, next) => {
        },
        "shivangshekha2807",
        {
-         expiresIn: "1d",
+         expiresIn: "1h",
        }
      );
     
@@ -93,7 +93,7 @@ authRouter.post("/login", async (req, res) => {
         },
         "shivangshekha2807",
         {
-          expiresIn: "1d",
+          expiresIn: "1h",
         }
       );
 
@@ -119,7 +119,9 @@ authRouter.post('/logout', async (req, res) => {
     res.cookie('Token', null, {
         expires: new Date(Date.now()),
     });
-    res.send("LOGOUT SUCCESSFULL")
+    res.json({
+      status: "LOGOUT SUCCESSFULL",
+    });
 })
 
 module.exports = authRouter;
