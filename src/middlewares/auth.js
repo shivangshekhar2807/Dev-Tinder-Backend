@@ -12,7 +12,7 @@ const userAuth = async(req, res, next) => {
       return res.status(401).send("Please Login")
     }
     
-    const decodedMessage = await jwt.verify(Token, "shivangshekha2807");
+    const decodedMessage = await jwt.verify(Token, process.env.JWT_SECRET);
     
     const { _id } = decodedMessage;
 
@@ -26,7 +26,7 @@ const userAuth = async(req, res, next) => {
       next();
   }
   catch (err) {
-      res.status(400).send("ERROR :"+err.message)
+      res.status(401).send("ERROR :"+err.message)
     }
 
 };
