@@ -12,21 +12,21 @@ const initializeSocket = (server) => {
     socket.on("joinChat", async({ firstName, userId, chatId }) => {
       const roomId = [userId, chatId].sort().join("_");
 
-       const areConnected = await ConnectionRequest.findOne({
-          $or: [
-            { fromUserId: userId, toUserId: chatId, status: "interested" },
-          { fromUserId: chatId, toUserId: userId, status: "interested" }
-          ]
-        });
+      //  const areConnected = await ConnectionRequest.findOne({
+      //     $or: [
+      //       { fromUserId: userId, toUserId: chatId, status: "interested" },
+      //     { fromUserId: chatId, toUserId: userId, status: "interested" }
+      //     ]
+      //   });
      
-        if (!areConnected) {
-          console.log(
-            "you cannot jion the room ,because you both are not connected"
-          );
-          return "you cannot jion the room ,because you both are not connected";
-        }
+      //   if (!areConnected) {
+      //     console.log(
+      //       "you cannot jion the room ,because you both are not connected"
+      //     );
+      //     return "you cannot jion the room ,because you both are not connected";
+      //   }
 
-        console.log("yoy can jion the room")
+      //   console.log("yoy can jion the room")
 
 
       console.log("joining room at ", roomId, "by", firstName);
@@ -40,21 +40,21 @@ const initializeSocket = (server) => {
         const roomId = [userId, chatId].sort().join("_");
         console.log(firstName, " has send a message---->", text);
 
-        const areConnected = await ConnectionRequest.findOne({
-          $or: [
-            { fromUserId: userId, toUserId: chatId, status: "interested" },
-          { fromUserId: chatId, toUserId: userId, status: "interested" }
-          ]
-        });
+        // const areConnected = await ConnectionRequest.findOne({
+        //   $or: [
+        //     { fromUserId: userId, toUserId: chatId, status: "interested" },
+        //   { fromUserId: chatId, toUserId: userId, status: "interested" }
+        //   ]
+        // });
      
-        if (!areConnected) {
-          console.log(
-            "you cannot send message to this person ,because you both are not connected"
-          );
-          return "you cannot send message to this person ,because you both are not connected"
-        }
+        // if (!areConnected) {
+        //   console.log(
+        //     "you cannot send message to this person ,because you both are not connected"
+        //   );
+        //   return "you cannot send message to this person ,because you both are not connected"
+        // }
 
-        console.log("yoy can send message")
+        // console.log("yoy can send message")
 
 
         //save message to DATABASE
